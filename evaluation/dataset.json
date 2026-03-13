@@ -1,0 +1,308 @@
+[
+  {
+    "question": "Who wrote 'AI is the new electricity'?",
+    "expected_answer": "Andrew Ng",
+    "chunk_id": 0,
+    "source_page": 7
+  },
+  {
+    "question": "What is one benefit of being able to explain what you accomplished?",
+    "expected_answer": "Helping convince others to open the door to larger projects",
+    "chunk_id": 29,
+    "source_page": 24
+  },
+  {
+    "question": "What are some key areas included in learning?",
+    "expected_answer": "linear algebra, probability and statistics",
+    "chunk_id": 9,
+    "source_page": 10
+  },
+  {
+    "question": "What does the author recommend for learning more about informational interviews?",
+    "expected_answer": "This article from the UC Berkeley Career Center",
+    "chunk_id": 39,
+    "source_page": 32
+  },
+  {
+    "question": "What kind of companies can make a role switch easier?",
+    "expected_answer": "Startups",
+    "chunk_id": 32,
+    "source_page": 27
+  },
+  {
+    "question": "What is according to the author an alternative to traditional networking?",
+    "expected_answer": "Building up communities that one is part of.",
+    "chunk_id": 45,
+    "source_page": 39
+  },
+  {
+    "question": "What is the key difference between learning foundational skills in AI compared to other more mature fields?",
+    "expected_answer": "Learning foundational skills is a career-long process.",
+    "chunk_id": 5,
+    "source_page": 10
+  },
+  {
+    "question": "What is suggested as a way to approach the job-search process?",
+    "expected_answer": "An incremental approach",
+    "chunk_id": 44,
+    "source_page": 35
+  },
+  {
+    "question": "What do many companies use job titles in?",
+    "expected_answer": "inconsistent ways",
+    "chunk_id": 37,
+    "source_page": 32
+  },
+  {
+    "question": "What is the main purpose of informational interviewing?",
+    "expected_answer": "To learn about a target job or industry before starting a job search",
+    "chunk_id": 36,
+    "source_page": 32
+  },
+  {
+    "question": "What is the practice that helps the author regain a sense of control?",
+    "expected_answer": "I try to scenario planning exercise.",
+    "chunk_id": 34,
+    "source_page": 27
+  },
+  {
+    "question": "What was the topic of one of the author's first machine learning research projects?",
+    "expected_answer": "Training a neural network to mimic the sin(x) function",
+    "chunk_id": 28,
+    "source_page": 24
+  },
+  {
+    "question": "Is it possible for a side project to be a meaningful stepping stone to larger projects?",
+    "expected_answer": "Yes",
+    "chunk_id": 22,
+    "source_page": 20
+  },
+  {
+    "question": "What should you do before an interview?",
+    "expected_answer": "Ask the recruiter what to expect.",
+    "chunk_id": 41,
+    "source_page": 35
+  },
+  {
+    "question": "What can help during the job-search process?",
+    "expected_answer": "Get help from your community.",
+    "chunk_id": 43,
+    "source_page": 35
+  },
+  {
+    "question": "What approach to developing a new AI project does 'Ready, Aim, Fire' tend to be superior?",
+    "expected_answer": "when the cost of execution is high",
+    "chunk_id": 23,
+    "source_page": 20
+  },
+  {
+    "question": "What is the recommended approach when committing to a direction in project development?",
+    "expected_answer": "Ready, Fire, Aim: Jump into development and start executing.",
+    "chunk_id": 26,
+    "source_page": 24
+  },
+  {
+    "question": "What is the recommended approach for choosing AI projects?",
+    "expected_answer": "Start with small projects and gradually step up as your skills grow.",
+    "chunk_id": 19,
+    "source_page": 18
+  },
+  {
+    "question": "What is suggested if you're considering switching both roles and industries?",
+    "expected_answer": "It's recommended not to do both at the same time.",
+    "chunk_id": 31,
+    "source_page": 27
+  },
+  {
+    "question": "What is recommended as a way to unlock doors for job opportunities?",
+    "expected_answer": "A compelling resume, portfolio of technical projects, and strong interview performance",
+    "chunk_id": 40,
+    "source_page": 35
+  },
+  {
+    "question": "What are the three key steps for building a career in AI?",
+    "expected_answer": "Learning foundational technical skills, working on projects, and finding a job.",
+    "chunk_id": 6,
+    "source_page": 10
+  },
+  {
+    "question": "What are some ways to generate project ideas?",
+    "expected_answer": "Develop a side hustle or explore an area that is not part of your job.",
+    "chunk_id": 21,
+    "source_page": 20
+  },
+  {
+    "question": "What type of metrics are machine learning teams often most comfortable optimizing?",
+    "expected_answer": "Machine learning metrics (such as accuracy)",
+    "chunk_id": 17,
+    "source_page": 18
+  },
+  {
+    "question": "What was the topic of the author's first machine learning research project?",
+    "expected_answer": "Training a neural network to see how well it could mimic the sin(x) function",
+    "chunk_id": 27,
+    "source_page": 24
+  },
+  {
+    "question": "According to the passage, what is one important factor to consider when choosing an AI job?",
+    "expected_answer": "Your colleagues",
+    "chunk_id": 42,
+    "source_page": 35
+  },
+  {
+    "question": "What is the main purpose of understanding the math behind gradient descent, momentum, and Adam optimization algorithm?",
+    "expected_answer": "To make better decisions",
+    "chunk_id": 14,
+    "source_page": 15
+  },
+  {
+    "question": "What is a technique mentioned for learning about a target job?",
+    "expected_answer": "Informational interviewing",
+    "chunk_id": 35,
+    "source_page": 32
+  },
+  {
+    "question": "What are some examples of professions that will find uses for custom AI applications and data-derived insights?",
+    "expected_answer": "A wide variety of professions, including a pizza maker.",
+    "chunk_id": 2,
+    "source_page": 7
+  },
+  {
+    "question": "What approach does the author recommend for developing a habit of studying daily?",
+    "expected_answer": "consistently doing one thing, such as watching 10 seconds of an educational video every day",
+    "chunk_id": 12,
+    "source_page": 15
+  },
+  {
+    "question": "What is the name of some key libraries mentioned as important for machine learning?",
+    "expected_answer": "TensorFlow or PyTorch, and scikit-learn",
+    "chunk_id": 8,
+    "source_page": 10
+  },
+  {
+    "question": "What type of data might be used to estimate the generation capacity of wind turbines?",
+    "expected_answer": "Satellite imagery",
+    "chunk_id": 16,
+    "source_page": 18
+  },
+  {
+    "question": "Who is the author of the book 'Tiny Habits: The Small Changes That Change Everything'?",
+    "expected_answer": "BJ Fogg",
+    "chunk_id": 11,
+    "source_page": 15
+  },
+  {
+    "question": "What is one way to identify business problems according to the author?",
+    "expected_answer": "Identify a business problem (not an AI problem)",
+    "chunk_id": 15,
+    "source_page": 18
+  },
+  {
+    "question": "What are the three key steps of career growth?",
+    "expected_answer": "LEARNING, PROJECTS, JOB",
+    "chunk_id": 4,
+    "source_page": 7
+  },
+  {
+    "question": "What is the bias toward when building machine learning models?",
+    "expected_answer": "Ready, Fire, Aim",
+    "chunk_id": 25,
+    "source_page": 24
+  },
+  {
+    "question": "What are the benefits of reading web pages for gaining skills in machine learning?",
+    "expected_answer": "They tend to repeat each other, use inconsistent terminology, vary in quality, and leave gaps.",
+    "chunk_id": 10,
+    "source_page": 15
+  },
+  {
+    "question": "What is the expected total number of days according to the mortality calculator mentioned in the passage?",
+    "expected_answer": "27,649",
+    "chunk_id": 51,
+    "source_page": 41
+  },
+  {
+    "question": "What is the framework for finding a job mentioned in this chapter?",
+    "expected_answer": "A simple framework for starting your AI job search",
+    "chunk_id": 30,
+    "source_page": 27
+  },
+  {
+    "question": "What percentage of people experience imposter syndrome at some point?",
+    "expected_answer": "An estimated 70 percent",
+    "chunk_id": 47,
+    "source_page": 39
+  },
+  {
+    "question": "What is the author's hope for AI literacy?",
+    "expected_answer": "Someday, I hope, it will be just as common that people know how to write code, specifically for AI.",
+    "chunk_id": 1,
+    "source_page": 7
+  },
+  {
+    "question": "What percentage of people experience imposter syndrome?",
+    "expected_answer": "70 percent",
+    "chunk_id": 48,
+    "source_page": 39
+  },
+  {
+    "question": "What is the author's approach to building a personal network?",
+    "expected_answer": "The author focuses on building up the communities they're part of.",
+    "chunk_id": 46,
+    "source_page": 39
+  },
+  {
+    "question": "What is the purpose of building basic AI applications?",
+    "expected_answer": "I hope the promise of building basic AI applications...encourages more people to learn how to code.",
+    "chunk_id": 3,
+    "source_page": 7
+  },
+  {
+    "question": "What are the core concepts behind how and why machine learning works?",
+    "expected_answer": "Bias/variance, cost functions, regularization, optimization algorithms, and error analysis.",
+    "chunk_id": 7,
+    "source_page": 10
+  },
+  {
+    "question": "What is the author's guarantee about being part of the AI community?",
+    "expected_answer": "everyone who has published a seminal AI paper struggled with similar technical challenges at some point",
+    "chunk_id": 49,
+    "source_page": 39
+  },
+  {
+    "question": "What type of approach is superior when the cost of execution is high?",
+    "expected_answer": "Ready, Aim, Fire",
+    "chunk_id": 24,
+    "source_page": 20
+  },
+  {
+    "question": "What is emphasized when selecting and executing AI projects?",
+    "expected_answer": "Career development",
+    "chunk_id": 18,
+    "source_page": 18
+  },
+  {
+    "question": "How often does the author like to think about their past and future on their birthday?",
+    "expected_answer": "Every year",
+    "chunk_id": 50,
+    "source_page": 41
+  },
+  {
+    "question": "What is a way to come up with new ideas?",
+    "expected_answer": "I come up with new ideas whenever I spend a lot of time reading, taking courses, or talking with domain experts.",
+    "chunk_id": 20,
+    "source_page": 20
+  },
+  {
+    "question": "What is the main purpose of reaching out to someone for an informational interview?",
+    "expected_answer": "To pay it forward and help someone coming after you.",
+    "chunk_id": 38,
+    "source_page": 32
+  },
+  {
+    "question": "What is mentioned as an underused tool for becoming more familiar with a new role and/or industry?",
+    "expected_answer": "The informational interview.",
+    "chunk_id": 33,
+    "source_page": 27
+  }
+]

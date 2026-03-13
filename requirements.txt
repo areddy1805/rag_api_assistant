@@ -1,0 +1,25 @@
+sentence-transformers
+requests
+faiss-cpu
+numpy
+pypdf
+nltk
+rank-bm25
+scikit-learn
+torch
+tqdm
+orjson
+tiktoken
+
+
+# sentence-transformers  → embedding model + reranker
+# requests               → API calls to local LLM
+# faiss-cpu              → vector similarity search
+# numpy                  → numerical tensor handling
+# pypdf                  → PDF parsing
+# nltk                   → sentence tokenization
+# rank-bm25              → keyword search
+# scikit-learn           → evaluation metrics
+# torch                  → backend for embedding + reranker models
+# tqdm   → progress bars during ingestion pipelines
+# orjson → faster serialization of chunk metadata
