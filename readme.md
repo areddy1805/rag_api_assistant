@@ -1,26 +1,53 @@
-System architecture specification.
+:::writing{variant=“standard” id=“67125”}
+
+RAG API Assistant — Baseline Retrieval System
+
+Overview
+
+This repository contains the baseline implementation of a production-style Retrieval Augmented Generation (RAG) system designed for high-accuracy document question answering.
+
+The system combines:
+• hybrid retrieval (vector + lexical search)
+• parent–child hierarchical chunking
+• cross-encoder reranking
+• sentence-level context compression
+
+to produce grounded answers from document sources.
+
+The architecture is intentionally transparent and modular so that each retrieval stage can be inspected, evaluated, and improved.
+
+This repository represents Version 1 of the retrieval engine that will later evolve into a full Internal API Knowledge Assistant capable of indexing and querying large developer documentation corpora.
 
 ⸻
 
 System Type
 
 Retrieval Augmented Generation (RAG)
-Hybrid Retrieval + Parent-Child Context Expansion + Sentence Compression
 
-Purpose:
+Pipeline type:
 
-Answer questions using document knowledge with high retrieval accuracy
-and controlled context grounding.
+Hybrid Retrieval + Parent–Child Context Expansion + Sentence Compression
 
 ⸻
 
-High-Level Pipeline
+Purpose
+
+Answer questions using document knowledge with:
+• high retrieval recall
+• strong contextual grounding
+• minimal hallucination
+
+The system retrieves relevant document sections and provides them as context to an LLM, ensuring answers remain grounded in source material.
+
+⸻
+
+High-Level Architecture
 
 Documents
 ↓
 Ingestion
 ↓
-Parent-Child Chunking
+Parent–Child Chunking
 ↓
 Embedding + Indexing
 ↓
@@ -40,10 +67,10 @@ Answer
 
 ⸻
 
-Repository Architecture
+Repository Structure
 
 rag_v1/
-│
+
 ├── ingestion/
 │ ├── semantic_chunk.py
 │ ├── build_embeddings.py
@@ -91,7 +118,15 @@ rag_v1/
 
 Data Architecture
 
-Parent chunk structure.
+The system uses hierarchical chunking.
+
+Large document sections are stored as parent chunks, while smaller segments are indexed as child chunks.
+
+Only child chunks are embedded and indexed.
+
+Parent chunks are used later to recover broader context.
+
+Parent Chunk
 
 {
 parent_id
@@ -100,7 +135,7 @@ page
 source
 }
 
-Child chunk structure.
+Child Chunk
 
 {
 chunk_id
@@ -110,27 +145,28 @@ page
 source
 }
 
-Hierarchy.
+Hierarchy
 
-Parent Chunk (~1000 tokens)
+Parent (~1000 tokens)
 
-├─ Child Chunk (~300 tokens)
-├─ Child Chunk
-├─ Child Chunk
-└─ Child Chunk
+├ Child (~300 tokens)
+├ Child
+├ Child
+└ Child
 
 ⸻
 
 Ingestion Layer
 
+The ingestion pipeline converts source documents into indexed chunks.
+
 Responsibilities:
+• PDF parsing
+• sentence segmentation
+• parent–child chunk generation
+• artifact persistence
 
-PDF parsing
-sentence segmentation
-parent-child chunk creation
-chunk storage
-
-Flow.
+Processing Flow
 
 PDF
 ↓
@@ -141,7 +177,7 @@ build_parent_child_chunks()
 parents.json
 chunks.json
 
-Chunk parameters.
+Chunk Configuration
 
 parent_tokens ≈ 1000
 child_tokens ≈ 300
@@ -149,27 +185,29 @@ overlap ≈ 80
 
 ⸻
 
-Embedding + Index Layer
+Embedding and Index Layer
 
-Embeddings generated for child chunks only.
+Embeddings are generated only for child chunks.
 
-Model:
+Embedding Model
 
 BAAI/bge-small-en-v1.5
 
-Vector dimension.
+Embedding Dimension
 
 384
 
-Index:
+Vector Index
 
-FAISS IndexFlatIP (cosine similarity)
+FAISS IndexFlatIP
 
-Additional index:
+This configuration performs cosine similarity search.
 
-BM25 keyword index
+Additional Index
 
-Artifacts produced.
+BM25 lexical index
+
+Generated Artifacts
 
 embeddings.npy
 faiss.index
@@ -177,11 +215,11 @@ bm25.pkl
 
 ⸻
 
-Retrieval Layer
+Retrieval Pipeline
 
-Hybrid retrieval combines semantic and lexical search.
+The system uses hybrid retrieval, combining semantic and lexical search.
 
-Process.
+Retrieval Process
 
 vector_search(query, k)
 bm25_search(query, k)
@@ -190,79 +228,88 @@ Reciprocal Rank Fusion
 ↓
 hybrid_search(query)
 
-Fusion algorithm.
+Fusion Algorithm
 
-RRF (k = 60)
+Reciprocal Rank Fusion
+
+RRF constant k = 60
 
 ⸻
 
-Query Understanding Layer
+Query Understanding
 
-Two LLM-driven transformations. 1. Query rewrite
+The system improves search quality using two LLM-driven transformations.
 
-user question
-→ concise retrieval query
+Query Rewrite
 
-    2.	Query expansion
+The user question is converted into a concise retrieval query.
 
-generate 3 alternate queries
+User Question
+↓
+Rewrite
+↓
+Optimized Search Query
 
-Final search set.
+Query Expansion
 
-[rewritten_query + expansion_queries]
+The system generates additional alternative queries.
+
+Original Query
+
+- 3 Expanded Queries
+
+Final Query Set
+
+[ rewritten_query + expansion_queries ]
 
 ⸻
 
 Multi-Query Retrieval
 
-Each query runs hybrid retrieval.
-
-Results merged.
+Each query variant executes the hybrid retrieval pipeline.
 
 query_1 → results
 query_2 → results
 query_3 → results
 query_4 → results
 
-deduplicate by chunk_id
+Results are merged and deduplicated by chunk_id.
 
-Output.
+Output
 
-candidate chunks (~20)
+candidate chunks ≈ 20
 
 ⸻
 
 Reranking Layer
 
-Cross-encoder relevance model.
+Candidate chunks are reranked using a cross-encoder relevance model.
 
-Model.
+Model
 
 BAAI/bge-reranker-base
 
-Input.
+Input
 
 (query, chunk_text)
 
-Output.
+Output
 
-relevance score
+Relevance score.
 
-Top results retained.
+Selection
 
 top_k = 7
 
 ⸻
 
-Parent Expansion
+Parent Context Expansion
 
-Child chunks are expanded to their parent sections.
+Child chunks contain limited context.
 
-Purpose.
+The system retrieves the corresponding parent chunk to restore the surrounding section.
 
-recover full context surrounding retrieved evidence
-
-Process.
+Process
 
 child chunks
 ↓
@@ -276,23 +323,25 @@ retrieve parent text
 
 Context Compression
 
-Parent text is reduced using sentence-level ranking.
+Parent chunks may be too large for LLM prompts.
 
-Model.
+The system compresses them using sentence-level ranking.
+
+Model
 
 BAAI/bge-reranker-base
 
-Process.
+Compression Pipeline
 
 parent text
 ↓
 sentence segmentation
 ↓
-(query, sentence) scoring
+score(query, sentence)
 ↓
-top sentences selected
+select top sentences
 
-Configuration.
+Configuration
 
 sentences_per_parent ≈ 6
 
@@ -300,9 +349,9 @@ sentences_per_parent ≈ 6
 
 Prompt Construction
 
-Context built from compressed parents.
+The final prompt is constructed from compressed document context.
 
-Structure.
+Prompt Structure
 
 Documents:
 <compressed context>
@@ -310,46 +359,62 @@ Documents:
 Question:
 <user question>
 
-Grounding rules.
+Grounding Rules
+• Use only the provided documents
+• Base answers strictly on retrieved context
+• If no information exists, return:
 
-Use only provided documents
-Answer based on available information
-Say "I don't know" only if no relevant information exists
+"I don't know"
 
 ⸻
 
 LLM Layer
 
-Local model via Ollama.
+Generation currently runs locally.
+
+Model
 
 llama3
 
-Interface.
+Runtime
+
+Ollama
+
+Endpoint
 
 POST http://localhost:11434/api/chat
-
-Response returned to user.
 
 ⸻
 
 Evaluation System
 
-Two evaluation modes.
+The system includes automated evaluation for both retrieval and generation.
 
-Retrieval evaluation.
+Retrieval Evaluation
+
+Metric:
 
 Chunk Recall@3
 
-Generation evaluation.
+Measures whether relevant chunks are retrieved.
 
-LLM-based scoring (1–5 scale)
+Generation Evaluation
 
-Dataset generation.
+Answers are scored using LLM-based grading.
 
-LLM generates QA pairs from chunks
-ground truth stored with chunk_id
+Score range:
 
-Dataset structure.
+1 – 5
+
+Dataset Generation
+
+The evaluation dataset is generated automatically.
+
+Process:
+• LLM creates QA pairs from document chunks
+• Ground truth chunk IDs are recorded
+
+Dataset Format
 
 {
 question
@@ -362,23 +427,23 @@ source_page
 
 Current Performance
 
-Retrieval.
+Retrieval
 
 Chunk Recall@3 ≈ 0.98
 
-Generation.
+Generation
 
-Average Answer Score ≈ 3.8–4.5
+Average Answer Score ≈ 3.8 – 4.5
 
 ⸻
 
 Technology Stack
 
-Language.
+Language
 
 Python
 
-Core libraries.
+Core Libraries
 
 sentence-transformers
 faiss-cpu
@@ -392,18 +457,21 @@ requests
 orjson
 tqdm
 
-Models.
+Models
 
-Embedding:
+Embedding
+
 BAAI/bge-small-en-v1.5
 
-Reranker:
+Reranker
+
 BAAI/bge-reranker-base
 
-LLM:
+LLM
+
 llama3 (Ollama)
 
-Hardware.
+Hardware
 
 Apple Silicon (M-series)
 Torch MPS backend
@@ -412,7 +480,7 @@ Torch MPS backend
 
 Observability
 
-Logging system tracks.
+The system logs the following information for each query.
 
 query rewrite
 query expansion
@@ -421,39 +489,54 @@ reranking results
 context preview
 LLM response
 
+This enables debugging and retrieval quality analysis.
+
 ⸻
 
-System Characteristics
+System Capabilities
 
-Capabilities.
+Current capabilities:
+• document question answering
+• hybrid semantic + lexical retrieval
+• context-aware reasoning
+• automated evaluation
+• local LLM inference
 
-document question answering
-semantic + lexical retrieval
-context-aware reasoning
-evaluation benchmarking
-local LLM operation
+⸻
 
-Limitations.
+Current Limitations
+
+The current baseline system has several limitations.
 
 single-document knowledge base
-no persistent vector DB
+no persistent vector database
 no multi-document ranking
-no user interface
+no API service
 no streaming responses
+no UI interface
 
 ⸻
 
-Expansion Potential
+Future Expansion
 
-This architecture supports extension to:
+This architecture is designed to evolve into a developer documentation intelligence system.
+
+Future extensions include:
 
 multi-document knowledge bases
-API-based AI assistants
-enterprise document search
-legal / research assistants
-personal knowledge agents
-AI copilots
+API documentation assistants
+enterprise developer search
+RAG-powered internal copilots
+large documentation indexing
+production API service
 
 ⸻
 
-This specification fully describes the current system so it can be used as the baseline architecture for building a real-world RAG application.
+Project Status
+
+Current state:
+
+Baseline RAG Retrieval System
+
+This version serves as the foundation for building a production-grade developer documentation assistant.
+:::
