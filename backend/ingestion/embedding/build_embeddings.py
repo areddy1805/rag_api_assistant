@@ -3,17 +3,18 @@ import numpy as np
 import faiss
 import pickle
 import os
+import torch
 from sentence_transformers import SentenceTransformer
 from rank_bm25 import BM25Okapi
 
-CHILD_PATH = "data/chunks/chunks.json"
-PARENT_PATH = "data/chunks/parents.json"
+CHILD_PATH = "data/processed_docs/chunks.json"
+PARENT_PATH = "data/processed_docs/parents.json"
 
 EMBED_PATH = "data/embeddings/embeddings.npy"
-INDEX_PATH = "data/index/faiss.index"
+INDEX_PATH = "index/faiss.index"
 BM25_PATH = "data/bm25/bm25.pkl"
 
-model = SentenceTransformer("BAAI/bge-small-en-v1.5", device="mps")
+model = SentenceTransformer("BAAI/bge-small-en-v1.5", device = "mps" if torch.backends.mps.is_available() else "cpu")
 
 
 with open(CHILD_PATH) as f:

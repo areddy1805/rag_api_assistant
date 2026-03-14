@@ -6,11 +6,11 @@ import time
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(PROJECT_ROOT)
 
-from retrieval.multi_query import multi_query_retrieval
-from reranking.reranker import rerank
-from retrieval.query_engine import rewrite_query
+from backend.retrieval.core.multi_query import multi_query_retrieval
+from backend.retrieval.ranking.reranker import rerank
+from backend.llm.query_llm import rewrite_query
 
-DATASET_PATH = "evaluation/dataset.json"
+DATASET_PATH = "backend/evaluation/dataset.json"
 
 MAX_EVAL = 50
 SLEEP_TIME = 1.5

@@ -3,7 +3,7 @@ import json
 import numpy as np
 
 BM25_PATH = "data/bm25/bm25.pkl"
-CHUNK_PATH = "data/chunks/chunks.json"
+CHUNK_PATH = "data/processed_docs/chunks.json"
 
 with open(BM25_PATH, "rb") as f:
     bm25 = pickle.load(f)

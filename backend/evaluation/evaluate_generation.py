@@ -6,10 +6,10 @@ import time
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(PROJECT_ROOT)
 
-from retrieval.query_engine import ask
-from llm.generator import generate
+from backend.services.chat_service import ask
+from backend.llm.client import chat
 
-DATASET_PATH = "evaluation/dataset.json"
+DATASET_PATH = "backend/evaluation/dataset.json"
 
 MAX_EVAL = 50
 SLEEP_TIME = 2
@@ -40,7 +40,7 @@ Model Answer:
 {model_answer}
 """
 
-    result = generate(prompt)
+    result = chat(prompt)
 
     try:
         score = int(result.strip())

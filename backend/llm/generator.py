@@ -1,14 +1,22 @@
-import requests
+from backend.llm.client import chat
 
-def generate(prompt):
 
-    r = requests.post(
-        "http://localhost:11434/api/chat",
-        json={
-            "model":"llama3",
-            "messages":[{"role":"user","content":prompt}],
-            "stream":False
-        }
-    )
+def generate_answer(question, context):
 
-    return r.json()["message"]["content"]
+    prompt = f"""
+Answer the question using the provided documents.
+
+If the answer is partially present, provide the best answer
+based on the information available.
+
+Only respond "I don't know" if the documents contain
+no relevant information at all.
+
+Documents:
+{context}
+
+Question:
+{question}
+"""
+
+    return chat(prompt)

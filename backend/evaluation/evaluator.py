@@ -6,13 +6,14 @@ import json
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(PROJECT_ROOT)
 
-from retrieval.multi_query import multi_query_retrieval
-from reranking.reranker import rerank
-from retrieval.query_engine import rewrite_query, generate_queries, ask
-from llm.generator import generate
+from backend.retrieval.core.multi_query import multi_query_retrieval
+from backend.retrieval.ranking.reranker import rerank
+from backend.services.chat_service import ask
+from backend.llm.query_llm import rewrite_query,generate_query_expansions
+from backend.llm.client import chat
 
 
-DATASET_PATH = "evaluation/dataset.json"
+DATASET_PATH = "backend/evaluation/dataset.json"
 
 
 def judge_answer(question, expected, model_answer):
@@ -40,7 +41,7 @@ Model Answer:
 {model_answer}
 """
 
-    result = generate(prompt)
+    result = chat(prompt)
 
     try:
         score = int(result.strip())
@@ -77,7 +78,7 @@ def evaluate():
 
         rewritten = rewrite_query(question)
 
-        queries = [rewritten] + generate_queries(rewritten)
+        queries = [rewritten] + generate_query_expansions(rewritten)
 
         candidates = multi_query_retrieval(queries)
 

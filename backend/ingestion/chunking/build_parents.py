@@ -1,7 +1,7 @@
 import json
 
-INPUT_PATH = "data/chunks/chunks.json"
-OUTPUT_PATH = "data/chunks/parents.json"
+INPUT_PATH = "data/processed_docs/chunks.json"
+OUTPUT_PATH = "data/processed_docs/parents.json"
 
 PARENT_SIZE = 1000
 

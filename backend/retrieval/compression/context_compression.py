@@ -1,7 +1,8 @@
 from sentence_transformers import CrossEncoder
 import nltk
+import torch
 
-model = CrossEncoder("BAAI/bge-reranker-base", device="mps")
+model = CrossEncoder("BAAI/bge-reranker-base", device = "mps" if torch.backends.mps.is_available() else "cpu")
 
 
 def compress_context(query, chunks, sentences_per_chunk=6):

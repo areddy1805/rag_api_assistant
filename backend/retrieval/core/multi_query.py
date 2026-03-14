@@ -1,4 +1,4 @@
-from retrieval.hybrid_search import hybrid_search
+from backend.retrieval.core.hybrid_search import hybrid_search
 
 
 def multi_query_retrieval(queries):

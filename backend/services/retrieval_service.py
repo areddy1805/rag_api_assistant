@@ -1,4 +1,4 @@
-from retrieval.query_engine import ask
+from backend.services.chat_service import ask
 
 
 def run():

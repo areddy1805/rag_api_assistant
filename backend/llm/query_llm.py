@@ -1,14 +1,42 @@
-import requests
+from backend.llm.client import chat
 
-def generate(prompt):
 
-    r = requests.post(
-        "http://localhost:11434/api/chat",
-        json={
-            "model":"llama3:instruct",
-            "messages":[{"role":"user","content":prompt}],
-            "stream":False
-        }
-    )
+def rewrite_query(query):
 
-    return r.json()["message"]["content"]
+    prompt = f"""
+Rewrite the following question into a concise search query.
+
+Return only the search query.
+
+Question:
+{query}
+"""
+
+    return chat(prompt).strip()
+
+
+def generate_query_expansions(query):
+
+    prompt = f"""
+Generate 3 search queries with the same meaning.
+
+Return each query on a new line.
+
+Question:
+{query}
+"""
+
+    result = chat(prompt)
+
+    lines = result.split("\n")
+
+    cleaned = []
+
+    for l in lines:
+        l = l.strip()
+        l = l.lstrip("0123456789.- ")
+
+        if l:
+            cleaned.append(l)
+
+    return cleaned

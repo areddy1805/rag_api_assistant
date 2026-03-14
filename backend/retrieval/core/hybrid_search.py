@@ -1,5 +1,5 @@
-from retrieval.vector_search import vector_search
-from retrieval.bm25_search import bm25_search
+from backend.retrieval.core.vector_search import vector_search
+from backend.retrieval.core.bm25_search import bm25_search
 
 
 def hybrid_search(query, k=10):

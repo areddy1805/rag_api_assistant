@@ -3,16 +3,15 @@ import os
 import json
 import random
 import time
+from backend.llm.client import chat
 
 # add project root to python path
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(PROJECT_ROOT)
 
-from llm.generator import generate
 
-
-CHUNKS_PATH = "data/chunks/chunks.json"
-OUTPUT_PATH = "evaluation/dataset.json"
+CHUNKS_PATH = "data/processed_docs/chunks.json"
+OUTPUT_PATH = "backend/evaluation/dataset.json"
 
 # number of questions to generate
 NUM_SAMPLES = 100
@@ -51,7 +50,7 @@ Passage:
 {chunk["text"]}
 """
 
-    result = generate(prompt)
+    result = chat(prompt)
 
     try:
         data = json.loads(result)
