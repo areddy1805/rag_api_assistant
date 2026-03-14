@@ -1,13 +1,17 @@
 from fastapi import APIRouter
-from backend.services.chat_service import ask
+from fastapi.responses import StreamingResponse
+from backend.services.chat_service import ask_stream
 
 router = APIRouter()
 
+
 @router.post("/chat")
-def chat_endpoint(payload: dict):
+def chat(payload: dict):
 
     question = payload["question"]
 
-    answer = ask(question)
+    def stream():
+        for token in ask_stream(question):
+            yield token
 
-    return {"answer": answer}
+    return StreamingResponse(stream(), media_type="text/plain")

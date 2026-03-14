@@ -1,7 +1,7 @@
-from backend.llm.client import chat
+from backend.llm.client import chat, ANSWER_MODEL
 
 
-def generate_answer(question, context):
+def generate_answer(question, context, stream=False):
 
     prompt = f"""
 Answer the question using the provided documents.
@@ -19,4 +19,4 @@ Question:
 {question}
 """
 
-    return chat(prompt)
+    return chat(prompt, ANSWER_MODEL)

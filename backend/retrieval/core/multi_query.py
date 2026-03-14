@@ -7,7 +7,7 @@ def multi_query_retrieval(queries):
 
     for q in queries:
 
-        results = hybrid_search(q, 10)
+        results = hybrid_search(q, 20)
 
         for r in results:
             all_chunks[r["chunk_id"]] = r

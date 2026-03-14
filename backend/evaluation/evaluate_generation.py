@@ -7,7 +7,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(PROJECT_ROOT)
 
 from backend.services.chat_service import ask
-from backend.llm.client import chat
+from backend.llm.client import chat, ANSWER_MODEL
 
 DATASET_PATH = "backend/evaluation/dataset.json"
 
@@ -40,7 +40,7 @@ Model Answer:
 {model_answer}
 """
 
-    result = chat(prompt)
+    result = chat(prompt,ANSWER_MODEL)
 
     try:
         score = int(result.strip())

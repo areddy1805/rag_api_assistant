@@ -1,4 +1,4 @@
-from backend.llm.client import chat
+from backend.llm.client import chat, REWRITE_MODEL
 
 
 def rewrite_query(query):
@@ -12,7 +12,7 @@ Question:
 {query}
 """
 
-    return chat(prompt).strip()
+    return chat(prompt, REWRITE_MODEL).strip()
 
 
 def generate_query_expansions(query):
@@ -26,7 +26,7 @@ Question:
 {query}
 """
 
-    result = chat(prompt)
+    result = chat(prompt, REWRITE_MODEL)
 
     lines = result.split("\n")
 

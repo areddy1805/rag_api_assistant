@@ -1,4 +1,4 @@
-from backend.services.chat_service import ask
+from backend.services.chat_service import ask_stream
 
 
 def run():
@@ -19,13 +19,14 @@ def run():
 
         try:
 
-            answer = ask(question)
-
             print("\n" + "-"*60)
             print("ANSWER")
             print("-"*60)
-            print(answer)
-            print("-"*60)
+
+            for token in ask_stream(question):
+                print(token, end="", flush=True)
+
+            print("\n" + "-"*60)
 
         except Exception as e:
 
