@@ -1,23 +1,16 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
 class Document:
 
     text: str
-
     source: str
 
-    page: int | None = None
+    page: Optional[int] = None
 
-    service_name: str | None = None
-
-    endpoint: str | None = None
-
-    http_method: str | None = None
-
-    api_version: str | None = None
-
-    section: str | None = None
-
-    document_type: str | None = None
+    service_name: Optional[str] = None
+    endpoint: Optional[str] = None
+    http_method: Optional[str] = None
+    document_type: Optional[str] = None

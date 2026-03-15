@@ -15,11 +15,14 @@ class HTMLLoader:
         text = soup.get_text(separator=" ")
 
         text = " ".join(text.split())
-
+        
+        service = "github" if "github" in path else "web"
+        
         return [
             Document(
                 text=text,
                 source=path,
+                service_name=service,
                 document_type="html"
             )
         ]

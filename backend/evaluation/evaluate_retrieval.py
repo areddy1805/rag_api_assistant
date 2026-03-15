@@ -10,10 +10,20 @@ from backend.retrieval.core.multi_query import multi_query_retrieval
 from backend.retrieval.ranking.reranker import rerank
 from backend.llm.query_llm import rewrite_query
 
+
 DATASET_PATH = "backend/evaluation/dataset.json"
+CHUNKS_PATH = "data/processed_docs/chunks.json"
 
 MAX_EVAL = 50
 SLEEP_TIME = 1.5
+
+
+def load_chunk_parent_map():
+
+    with open(CHUNKS_PATH) as f:
+        chunks = json.load(f)
+
+    return {c["chunk_id"]: c["parent_id"] for c in chunks}
 
 
 def evaluate():
@@ -23,16 +33,21 @@ def evaluate():
 
     dataset = dataset[:MAX_EVAL]
 
+    chunk_parent = load_chunk_parent_map()
+
     total = len(dataset)
-    retrieval_hits = 0
+
+    chunk_hits = 0
+    parent_hits = 0
 
     print("\nStarting Retrieval Evaluation")
-    print("="*60)
+    print("=" * 60)
 
     for item in dataset:
 
         question = item["question"]
         expected_chunk = item["chunk_id"]
+        expected_parent = chunk_parent.get(expected_chunk)
 
         print("\nQuestion:", question)
 
@@ -44,23 +59,34 @@ def evaluate():
 
         retrieved_chunks = [c["chunk_id"] for c in retrieved]
 
+        retrieved_parents = [
+            chunk_parent.get(cid) for cid in retrieved_chunks
+        ]
+
         print("Expected chunk:", expected_chunk)
+        print("Expected parent:", expected_parent)
         print("Retrieved chunks:", retrieved_chunks)
+        print("Retrieved parents:", retrieved_parents)
 
         if expected_chunk in retrieved_chunks:
-            retrieval_hits += 1
+            chunk_hits += 1
+
+        if expected_parent in retrieved_parents:
+            parent_hits += 1
 
         time.sleep(SLEEP_TIME)
 
-    recall = retrieval_hits / total
+    chunk_recall = chunk_hits / total
+    parent_recall = parent_hits / total
 
     print("\n")
-    print("="*60)
+    print("=" * 60)
     print("RETRIEVAL RESULTS")
-    print("="*60)
+    print("=" * 60)
 
     print("Total questions:", total)
-    print("Chunk Recall@3:", round(recall, 3))
+    print("Chunk Recall@3:", round(chunk_recall, 3))
+    print("Parent Recall@3:", round(parent_recall, 3))
 
 
 if __name__ == "__main__":

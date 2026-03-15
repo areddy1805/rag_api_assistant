@@ -11,11 +11,12 @@ class MarkdownLoader:
             text = f.read()
 
         html = markdown.markdown(text)
-
+        service = "kubernetes"
         return [
             Document(
                 text=html,
                 source=path,
+                service_name=service,
                 document_type="markdown"
             )
         ]

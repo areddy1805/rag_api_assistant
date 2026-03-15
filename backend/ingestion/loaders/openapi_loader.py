@@ -1,4 +1,6 @@
-import yaml
+import json
+import os
+
 from backend.ingestion.schema.document import Document
 
 
@@ -7,9 +9,11 @@ class OpenAPILoader:
     def load(self, path):
 
         with open(path) as f:
-            spec = yaml.safe_load(f)
+            spec = json.load(f)
 
         docs = []
+
+        service = os.path.basename(path).split("_")[0]
 
         paths = spec.get("paths", {})
 
@@ -21,22 +25,23 @@ class OpenAPILoader:
                 description = data.get("description", "")
 
                 text = f"""
-Endpoint: {endpoint}
-Method: {method}
+                Endpoint: {endpoint}
+                Method: {method}
 
-Summary:
-{summary}
+                Summary:
+                {summary}
 
-Description:
-{description}
-"""
+                Description:
+                {description}
+                """
 
                 docs.append(
                     Document(
-                        text=text,
+                        text=text.strip(),
                         source=path,
                         endpoint=endpoint,
-                        http_method=method,
+                        http_method=method.upper(),
+                        service_name=service,
                         document_type="openapi"
                     )
                 )

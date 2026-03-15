@@ -15,7 +15,7 @@ with open(CHUNK_PATH) as f:
 model = SentenceTransformer("BAAI/bge-small-en-v1.5",device = "mps" if torch.backends.mps.is_available() else "cpu")
 
 
-def vector_search(query, k=20):
+def vector_search(query, k=20, service=None):
 
     query = "Represent this sentence for searching relevant passages: " + query
 
@@ -23,4 +23,9 @@ def vector_search(query, k=20):
 
     scores, indices = index.search(np.array(q_emb).astype("float32"), k)
 
-    return [chunks[i] for i in indices[0]]
+    results = [chunks[i] for i in indices[0]]
+
+    if service:
+        results = [r for r in results if r.get("service_name") == service]
+
+    return results
