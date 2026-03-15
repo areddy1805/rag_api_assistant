@@ -1,7 +1,11 @@
 import tiktoken
+
 from backend.llm.query_llm import rewrite_query, generate_query_expansions
 from backend.llm.generator import generate_answer
-from backend.retrieval.query_engine import retrieve
+from backend.retrieval.core.multi_query import multi_query_retrieval
+from backend.retrieval.ranking.reranker import rerank
+from backend.retrieval.parent_expansion.parent_retriever import expand_to_parents
+from backend.retrieval.compression.context_compression import compress_context
 
 enc = tiktoken.get_encoding("cl100k_base")
 
@@ -14,16 +18,26 @@ def build_context(question):
 
     queries = [rewritten] + expansions
 
-    context_chunks = retrieve(queries)
+    # retrieve candidates for all queries
+    candidates = multi_query_retrieval(queries)
 
-    context = "\n\n".join([c["text"] for c in context_chunks])
+    # rerank using rewritten query
+    ranked = rerank(rewritten, candidates)
 
-    max_context_tokens = 1200
+    # parent expansion
+    parents = expand_to_parents(ranked)
+
+    # compression
+    compressed = compress_context(rewritten, parents)
+
+    context = "\n\n".join([c["text"] for c in compressed])
+
+    max_tokens = 1200
 
     tokens = enc.encode(context)
 
-    if len(tokens) > max_context_tokens:
-        tokens = tokens[:max_context_tokens]
+    if len(tokens) > max_tokens:
+        tokens = tokens[:max_tokens]
         context = enc.decode(tokens)
 
     return context

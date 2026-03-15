@@ -25,6 +25,8 @@ torch>=2.2,<3
 # =========================
 # Document Processing
 # =========================
+orjson==3.11.7
+pypdf==6.8.0
 beautifulsoup4==4.12.3
 markdown==3.6
 pdfminer.six==20231228

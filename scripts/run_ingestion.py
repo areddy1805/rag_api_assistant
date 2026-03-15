@@ -1,39 +1,47 @@
+import sys
 import os
 import orjson
 
-from backend.ingestion.ingest import load_doc, build_parent_child_chunks
-
-
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(PROJECT_ROOT)
 
-DOC_PATH = os.path.join(PROJECT_ROOT, "../../../Practise/data/eBook-How-to-Build-a-Career-in-AI.pdf")
+from backend.ingestion.pipeline import ingest_document
 
-DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+RAW_DOCS = "data/raw_docs"
 
-CHUNK_PATH = os.path.join(DATA_DIR, "processed_docs/chunks.json")
-PARENT_PATH = os.path.join(DATA_DIR, "processed_docs/parents.json")
+CHUNK_PATH = "data/processed_docs/chunks.json"
+PARENT_PATH = "data/processed_docs/parents.json"
 
+all_parents = []
+all_children = []
 
-# load document
-pages = load_doc(DOC_PATH)
+for root, _, files in os.walk(RAW_DOCS):
 
-# build parent + child chunks
-parents, children = build_parent_child_chunks(pages)
+    for f in files:
 
+        path = os.path.join(root, f)
 
-# ensure directory exists
-os.makedirs(os.path.dirname(CHUNK_PATH), exist_ok=True)
+        print("Ingesting:", path)
 
+        try:
 
-# save children
+            parents, children = ingest_document(path)
+
+            all_parents.extend(parents)
+            all_children.extend(children)
+
+        except Exception as e:
+
+            print("Failed:", path)
+            print(e)
+
+os.makedirs("data/processed_docs", exist_ok=True)
+
 with open(CHUNK_PATH, "wb") as f:
-    f.write(orjson.dumps(children))
+    f.write(orjson.dumps(all_children))
 
-
-# save parents
 with open(PARENT_PATH, "wb") as f:
-    f.write(orjson.dumps(parents))
+    f.write(orjson.dumps(all_parents))
 
-
-print("Parents saved:", len(parents))
-print("Child chunks saved:", len(children))
+print("Parents:", len(all_parents))
+print("Children:", len(all_children))
