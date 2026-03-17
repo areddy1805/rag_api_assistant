@@ -1,25 +1,60 @@
-sentence-transformers
-requests
-faiss-cpu
-numpy
-pypdf
-nltk
-rank-bm25
-scikit-learn
-torch
-tqdm
-orjson
-tiktoken
+# =========================
+# Core API Server
+# =========================
+fastapi==0.110.0
+uvicorn[standard]==0.27.1
+pydantic==2.6.3
+python-dotenv==1.0.1
 
+# =========================
+# Embeddings + Retrieval
+# =========================
+sentence-transformers==2.6.1
+faiss-cpu==1.8.0
+rank-bm25==0.2.2
+numpy>=1.26,<2
+scikit-learn>=1.4,<1.6
+nltk==3.9.3
 
-# sentence-transformers  → embedding model + reranker
-# requests               → API calls to local LLM
-# faiss-cpu              → vector similarity search
-# numpy                  → numerical tensor handling
-# pypdf                  → PDF parsing
-# nltk                   → sentence tokenization
-# rank-bm25              → keyword search
-# scikit-learn           → evaluation metrics
-# torch                  → backend for embedding + reranker models
-# tqdm   → progress bars during ingestion pipelines
-# orjson → faster serialization of chunk metadata
+# =========================
+# Reranking
+# =========================
+transformers>=4.39,<5
+torch>=2.2,<3
+
+# =========================
+# Document Processing
+# =========================
+orjson==3.11.7
+pypdf==6.8.0
+beautifulsoup4==4.12.3
+markdown==3.6
+pdfminer.six==20231228
+lxml>=5.1,<6
+pyyaml==6.0.1
+
+# =========================
+# LLM Providers
+# =========================
+ollama==0.1.7
+google-generativeai==0.4.1
+tiktoken>=0.6,<1
+
+# =========================
+# Utilities
+# =========================
+loguru==0.7.2
+tqdm>=4.66,<5
+tenacity>=8.2,<9
+requests>=2.31,<3
+
+# =========================
+# Evaluation
+# =========================
+datasets>=2.18,<3
+pandas>=2.2,<3
+
+# =========================
+# Testing
+# =========================
+pytest>=8.1,<9

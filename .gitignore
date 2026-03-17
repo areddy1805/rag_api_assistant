@@ -1,19 +1,28 @@
+# python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
 
-.env
-.venv
+# environments
+.venv/
 venv/
+.env
 
+# mac
+.DS_Store
+
+# RAG build artifacts
+data/processed_docs/
 data/embeddings/
 data/index/
 data/bm25/
-data/chunks/
 
+# generic model artifacts
 *.npy
 *.index
 *.pkl
 
-.DS_Store
+# logs
+*.log
+logs/
+trace.log
+rag.log
