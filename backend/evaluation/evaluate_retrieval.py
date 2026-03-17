@@ -40,6 +40,8 @@ def evaluate():
     chunk_hits = 0
     parent_hits = 0
 
+    results = []
+
     print("\nStarting Retrieval Evaluation")
     print("=" * 60)
 
@@ -68,11 +70,24 @@ def evaluate():
         print("Retrieved chunks:", retrieved_chunks)
         print("Retrieved parents:", retrieved_parents)
 
-        if expected_chunk in retrieved_chunks:
+        chunk_hit = expected_chunk in retrieved_chunks
+        parent_hit = expected_parent in retrieved_parents
+
+        if chunk_hit:
             chunk_hits += 1
 
-        if expected_parent in retrieved_parents:
+        if parent_hit:
             parent_hits += 1
+
+        results.append({
+            "question": question,
+            "expected_chunk": expected_chunk,
+            "expected_parent": expected_parent,
+            "retrieved_chunks": retrieved_chunks,
+            "retrieved_parents": retrieved_parents,
+            "chunk_hit": chunk_hit,
+            "parent_hit": parent_hit
+        })
 
         time.sleep(SLEEP_TIME)
 
@@ -88,6 +103,9 @@ def evaluate():
     print("Chunk Recall@3:", round(chunk_recall, 3))
     print("Parent Recall@3:", round(parent_recall, 3))
 
-
-if __name__ == "__main__":
-    evaluate()
+    return [
+        {
+            "recall": chunk_recall,
+            "parent_recall": parent_recall
+        }
+    ]
