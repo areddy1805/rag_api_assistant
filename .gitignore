@@ -20,3 +20,9 @@ data/bm25/
 *.npy
 *.index
 *.pkl
+
+# logs
+*.log
+logs/
+trace.log
+rag.log

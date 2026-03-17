@@ -10,6 +10,27 @@ parent_map = {p["parent_id"]: p for p in parents}
 
 def expand_to_parents(children):
 
-    parent_ids = set(c["parent_id"] for c in children)
+    parents = []
 
-    return [parent_map[p] for p in parent_ids]
+    seen = set()
+
+    for child in children:
+
+        pid = child["parent_id"]
+
+        if pid in seen:
+            continue
+
+        parent = parent_map[pid].copy()
+
+        # propagate metadata from child
+        parent["chunk_id"] = child.get("chunk_id")
+        parent["parent_id"] = pid
+        parent["source"] = child.get("source")
+        parent["page"] = child.get("page")
+
+        parents.append(parent)
+
+        seen.add(pid)
+
+    return parents

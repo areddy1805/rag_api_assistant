@@ -15,6 +15,9 @@ Rules:
 
 Question:
 {query}
+
+Return ONLY the rewritten query.
+Do not add versions, explanations, or punctuation.
 """
 
     return chat(prompt, REWRITE_MODEL).strip()
