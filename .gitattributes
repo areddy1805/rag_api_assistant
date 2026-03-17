@@ -1,6 +1,9 @@
-data/raw_docs/* linguist-vendored
-data/processed_docs/* linguist-vendored
-data/bm25/* linguist-vendored
-data/embeddings/* linguist-vendored
-data/index/* linguist-vendored
-logs/* linguist-vendored
+data/** linguist-vendored
+logs/** linguist-vendored
+embeddings/** linguist-vendored
+index/** linguist-vendored
+*.html linguist-vendored
+*.md linguist-vendored
+*.json linguist-vendored
+*.yaml linguist-vendored
+*.yml linguist-vendored
