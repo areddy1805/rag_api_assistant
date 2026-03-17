@@ -1,542 +1,210 @@
-:::writing{variant=“standard” id=“67125”}
+RAG API Assistant
 
-RAG API Assistant — Baseline Retrieval System
+RAG API Assistant is a production-style Retrieval-Augmented Generation system that answers developer questions using API documentation.
 
-Overview
-
-This repository contains the baseline implementation of a production-style Retrieval Augmented Generation (RAG) system designed for high-accuracy document question answering.
-
-The system combines:
-• hybrid retrieval (vector + lexical search)
-• parent–child hierarchical chunking
-• cross-encoder reranking
-• sentence-level context compression
-
-to produce grounded answers from document sources.
-
-The architecture is intentionally transparent and modular so that each retrieval stage can be inspected, evaluated, and improved.
-
-This repository represents Version 1 of the retrieval engine that will later evolve into a full Internal API Knowledge Assistant capable of indexing and querying large developer documentation corpora.
+The system ingests multiple documentation formats, builds hybrid retrieval indexes, and generates grounded answers using large language models.
 
 ⸻
 
-System Type
+Features
 
-Retrieval Augmented Generation (RAG)
-
-Pipeline type:
-
-Hybrid Retrieval + Parent–Child Context Expansion + Sentence Compression
-
-⸻
-
-Purpose
-
-Answer questions using document knowledge with:
-• high retrieval recall
-• strong contextual grounding
-• minimal hallucination
-
-The system retrieves relevant document sections and provides them as context to an LLM, ensuring answers remain grounded in source material.
+• Hybrid retrieval (vector + BM25)
+• Multi-query retrieval
+• Cross-encoder reranking
+• Parent-child document retrieval
+• Contextual compression
+• Token-budget context building
+• LLM-based answer generation
+• Streaming responses
+• Retrieval evaluation framework
+• RAG observability and tracing
 
 ⸻
 
-High-Level Architecture
+System Architecture
 
-Documents
-↓
-Ingestion
-↓
-Parent–Child Chunking
-↓
-Embedding + Indexing
-↓
-Hybrid Retrieval
-↓
-Reranking
-↓
-Parent Expansion
-↓
-Sentence-Level Context Compression
-↓
-Prompt Construction
-↓
-LLM Generation
-↓
-Answer
+The system follows a modular RAG pipeline:
 
-⸻
-
-Repository Structure
-
-rag_v1/
-
-├── ingestion/
-│ ├── semantic_chunk.py
-│ ├── build_embeddings.py
-│ └── run_ingestion.py
+User Query
 │
-├── retrieval/
-│ ├── vector_search.py
-│ ├── bm25_search.py
-│ ├── hybrid_search.py
-│ ├── multi_query.py
-│ ├── query_engine.py
-│ └── context_compression.py
-│
-├── reranking/
-│ └── reranker.py
-│
-├── llm/
-│ └── generator.py
-│
-├── evaluation/
-│ ├── generate_dataset.py
-│ ├── evaluate_retrieval.py
-│ └── evaluate_generation.py
-│
-├── utils/
-│ └── logger.py
-│
-├── data/
-│ ├── chunks/
-│ │ ├── parents.json
-│ │ └── chunks.json
-│ │
-│ ├── embeddings/
-│ │ └── embeddings.npy
-│ │
-│ ├── index/
-│ │ └── faiss.index
-│ │
-│ └── bm25/
-│ └── bm25.pkl
-│
-└── main.py
-
-⸻
-
-Data Architecture
-
-The system uses hierarchical chunking.
-
-Large document sections are stored as parent chunks, while smaller segments are indexed as child chunks.
-
-Only child chunks are embedded and indexed.
-
-Parent chunks are used later to recover broader context.
-
-Parent Chunk
-
-{
-parent_id
-text
-page
-source
-}
-
-Child Chunk
-
-{
-chunk_id
-parent_id
-text
-page
-source
-}
-
-Hierarchy
-
-Parent (~1000 tokens)
-
-├ Child (~300 tokens)
-├ Child
-├ Child
-└ Child
-
-⸻
-
-Ingestion Layer
-
-The ingestion pipeline converts source documents into indexed chunks.
-
-Responsibilities:
-• PDF parsing
-• sentence segmentation
-• parent–child chunk generation
-• artifact persistence
-
-Processing Flow
-
-PDF
-↓
-load_doc()
-↓
-build_parent_child_chunks()
-↓
-parents.json
-chunks.json
-
-Chunk Configuration
-
-parent_tokens ≈ 1000
-child_tokens ≈ 300
-overlap ≈ 80
-
-⸻
-
-Embedding and Index Layer
-
-Embeddings are generated only for child chunks.
-
-Embedding Model
-
-BAAI/bge-small-en-v1.5
-
-Embedding Dimension
-
-384
-
-Vector Index
-
-FAISS IndexFlatIP
-
-This configuration performs cosine similarity search.
-
-Additional Index
-
-BM25 lexical index
-
-Generated Artifacts
-
-embeddings.npy
-faiss.index
-bm25.pkl
-
-⸻
-
-Retrieval Pipeline
-
-The system uses hybrid retrieval, combining semantic and lexical search.
-
-Retrieval Process
-
-vector_search(query, k)
-bm25_search(query, k)
-↓
-Reciprocal Rank Fusion
-↓
-hybrid_search(query)
-
-Fusion Algorithm
-
-Reciprocal Rank Fusion
-
-RRF constant k = 60
-
-⸻
-
+▼
 Query Understanding
+│
+▼
+Hybrid Retrieval
+│
+▼
+Cross-Encoder Reranking
+│
+▼
+Parent Expansion
+│
+▼
+Contextual Compression
+│
+▼
+Token Budget Context Builder
+│
+▼
+LLM Generation
 
-The system improves search quality using two LLM-driven transformations.
+Detailed architecture can be found in:
 
-Query Rewrite
-
-The user question is converted into a concise retrieval query.
-
-User Question
-↓
-Rewrite
-↓
-Optimized Search Query
-
-Query Expansion
-
-The system generates additional alternative queries.
-
-Original Query
-
-- 3 Expanded Queries
-
-Final Query Set
-
-[ rewritten_query + expansion_queries ]
+architecture.md
 
 ⸻
 
-Multi-Query Retrieval
+Project Structure
 
-Each query variant executes the hybrid retrieval pipeline.
+backend/
+├ api/ FastAPI endpoints
+├ config/ configuration and logging
+├ evaluation/ evaluation tools
+├ ingestion/ document ingestion pipeline
+├ llm/ LLM clients and prompts
+├ observability/ tracing and metrics
+├ retrieval/ hybrid retrieval system
+├ services/ service layer
+└ vectorstore/ vector database interfaces
 
-query_1 → results
-query_2 → results
-query_3 → results
-query_4 → results
+data/
+├ raw_docs/ source documentation
+├ processed_docs/ chunked documents
+├ embeddings/ embedding vectors
+├ bm25/ keyword index
+└ index/ FAISS index
 
-Results are merged and deduplicated by chunk_id.
-
-Output
-
-candidate chunks ≈ 20
-
-⸻
-
-Reranking Layer
-
-Candidate chunks are reranked using a cross-encoder relevance model.
-
-Model
-
-BAAI/bge-reranker-base
-
-Input
-
-(query, chunk_text)
-
-Output
-
-Relevance score.
-
-Selection
-
-top_k = 7
+docker/ container configuration
+scripts/ helper scripts
+tests/ test cases
 
 ⸻
 
-Parent Context Expansion
+Installation
 
-Child chunks contain limited context.
+Clone the repository:
 
-The system retrieves the corresponding parent chunk to restore the surrounding section.
+git clone https://github.com/areddy1805/rag_api_assistant.git
+cd rag_api_assistant
 
-Process
+Create virtual environment:
 
-child chunks
-↓
-collect parent_id
-↓
-load parents.json
-↓
-retrieve parent text
+python -m venv .venv
+source .venv/bin/activate
 
-⸻
+Install dependencies:
 
-Context Compression
-
-Parent chunks may be too large for LLM prompts.
-
-The system compresses them using sentence-level ranking.
-
-Model
-
-BAAI/bge-reranker-base
-
-Compression Pipeline
-
-parent text
-↓
-sentence segmentation
-↓
-score(query, sentence)
-↓
-select top sentences
-
-Configuration
-
-sentences_per_parent ≈ 6
+pip install -r requirements.txt
 
 ⸻
 
-Prompt Construction
+Running Document Ingestion
 
-The final prompt is constructed from compressed document context.
+To build indexes from documentation:
 
-Prompt Structure
+python scripts/run_ingestion.py
 
-Documents:
-<compressed context>
+This will:
 
-Question:
-<user question>
-
-Grounding Rules
-• Use only the provided documents
-• Base answers strictly on retrieved context
-• If no information exists, return:
-
-"I don't know"
+• parse documents
+• build parent-child chunks
+• generate embeddings
+• create vector and BM25 indexes
 
 ⸻
 
-LLM Layer
+Running the API Server
 
-Generation currently runs locally.
+Start the FastAPI server:
 
-Model
+uvicorn backend.api.server:app --reload
 
-llama3
+Available endpoints:
 
-Runtime
-
-Ollama
-
-Endpoint
-
-POST http://localhost:11434/api/chat
+POST /chat
+POST /retrieve
+GET /health
+GET /metrics
 
 ⸻
 
-Evaluation System
+Example Query
 
-The system includes automated evaluation for both retrieval and generation.
+How do I create a Stripe payment intent?
 
-Retrieval Evaluation
+Example response:
 
-Metric:
+Endpoint: /v1/payment_intents
+Method: POST
 
-Chunk Recall@3
-
-Measures whether relevant chunks are retrieved.
-
-Generation Evaluation
-
-Answers are scored using LLM-based grading.
-
-Score range:
-
-1 – 5
-
-Dataset Generation
-
-The evaluation dataset is generated automatically.
-
-Process:
-• LLM creates QA pairs from document chunks
-• Ground truth chunk IDs are recorded
-
-Dataset Format
-
-{
-question
-expected_answer
-chunk_id
-source_page
-}
+Create a PaymentIntent using the Stripe API. You can optionally set confirm=true
+to create and confirm the PaymentIntent in a single request.
 
 ⸻
 
-Current Performance
+Evaluation
 
-Retrieval
+Generate evaluation dataset:
 
-Chunk Recall@3 ≈ 0.98
+python -m backend.evaluation.generate_dataset
 
-Generation
+Run retrieval evaluation:
 
-Average Answer Score ≈ 3.8 – 4.5
+python -m backend.evaluation.evaluate_retrieval
 
-⸻
+Run generation evaluation:
 
-Technology Stack
-
-Language
-
-Python
-
-Core Libraries
-
-sentence-transformers
-faiss-cpu
-rank-bm25
-pypdf
-nltk
-tiktoken
-numpy
-torch
-requests
-orjson
-tqdm
-
-Models
-
-Embedding
-
-BAAI/bge-small-en-v1.5
-
-Reranker
-
-BAAI/bge-reranker-base
-
-LLM
-
-llama3 (Ollama)
-
-Hardware
-
-Apple Silicon (M-series)
-Torch MPS backend
+python -m backend.evaluation.evaluate_generation
 
 ⸻
 
 Observability
 
-The system logs the following information for each query.
+The system includes detailed RAG tracing.
 
-query rewrite
-query expansion
-retrieval candidates
-reranking results
-context preview
-LLM response
+Metrics logged:
 
-This enables debugging and retrieval quality analysis.
+query
+rewrite
+expansions
+retrieved chunks
+reranked chunks
+context tokens
+generation latency
+grounding score
+token usage
 
-⸻
+Logs are stored in:
 
-System Capabilities
-
-Current capabilities:
-• document question answering
-• hybrid semantic + lexical retrieval
-• context-aware reasoning
-• automated evaluation
-• local LLM inference
+logs/rag.log
 
 ⸻
 
-Current Limitations
+Docker Deployment
 
-The current baseline system has several limitations.
+Build container:
 
-single-document knowledge base
-no persistent vector database
-no multi-document ranking
-no API service
-no streaming responses
-no UI interface
+docker build -t rag-api-assistant .
 
-⸻
+Run with docker compose:
 
-Future Expansion
-
-This architecture is designed to evolve into a developer documentation intelligence system.
-
-Future extensions include:
-
-multi-document knowledge bases
-API documentation assistants
-enterprise developer search
-RAG-powered internal copilots
-large documentation indexing
-production API service
+docker-compose up
 
 ⸻
 
-Project Status
+Future Improvements
 
-Current state:
+Potential enhancements:
 
-Baseline RAG Retrieval System
+• semantic caching
+• adaptive retrieval depth
+• query decomposition
+• distributed indexing
+• advanced reranking models
 
-This version serves as the foundation for building a production-grade developer documentation assistant.
+⸻
+
+License
+
+MIT License
 :::
