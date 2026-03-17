@@ -93,6 +93,13 @@ def evaluate():
     print("Total questions:", total)
     print("Average Score:", round(avg,2))
 
+    return [
+        {
+            "grounding": avg,
+            "latency": 0
+        }
+    ]
+
 
 if __name__ == "__main__":
     evaluate()

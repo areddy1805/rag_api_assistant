@@ -12,9 +12,10 @@ from backend.observability.trace import RAGTrace
 from backend.observability.logger import logger
 from backend.observability.grounding import grounding_score
 
+from backend.services.semantic_cache import check_cache, store_cache
+
 
 enc = tiktoken.get_encoding("cl100k_base")
-
 
 MAX_CONTEXT_TOKENS = 500
 MAX_CHUNK_TOKENS = 200
@@ -28,18 +29,21 @@ def build_token_limited_context(chunks):
 
     for c in chunks:
 
-        text = c["text"]
-        cid = c["chunk_id"]
+        text = c.get("text", "")
+        cid = c.get("chunk_id")
 
         tokens = enc.encode(text)
 
+        # truncate large chunks
         if len(tokens) > MAX_CHUNK_TOKENS:
             tokens = tokens[:MAX_CHUNK_TOKENS]
             text = enc.decode(tokens)
 
         token_count = len(tokens)
 
+        # enforce context token budget
         if total_tokens + token_count > MAX_CONTEXT_TOKENS:
+            logger.info("[CONTEXT_TRUNCATED]")
             break
 
         context_parts.append(text)
@@ -102,22 +106,41 @@ def build_context(question, trace):
     return context
 
 
-def ask(question):
-
-    trace = RAGTrace(question)
-
-    context = build_context(question, trace)
-
-    trace.start_stage("generation")
-    answer = generate_answer(question, context)
-    trace.end_stage("generation")
+def finalize_answer(answer, context):
 
     score = grounding_score(answer, context)
 
     logger.info(f"[ANSWER] {answer}")
     logger.info(f"[GROUNDING] score={score}")
+
     if score < 0.35:
         logger.warning("[HALLUCINATION_RISK] answer poorly grounded")
+
+
+def ask(question):
+
+    # semantic cache check
+    cached = check_cache(question)
+
+    if cached:
+        logger.info("[CACHE HIT]")
+        return cached
+
+    trace = RAGTrace(question)
+
+    context = build_context(question, trace)
+
+    if not context.strip():
+        logger.warning("[EMPTY_CONTEXT] No retrieved context")
+
+    trace.start_stage("generation")
+    answer = generate_answer(question, context)
+    trace.end_stage("generation")
+
+    finalize_answer(answer, context)
+
+    # store in cache
+    store_cache(question, answer)
 
     trace.finish()
 
@@ -126,18 +149,27 @@ def ask(question):
 
 def ask_stream(question):
 
+    # semantic cache check
+    cached = check_cache(question)
+
+    if cached:
+        logger.info("[CACHE HIT]")
+        yield cached
+        return
+
     trace = RAGTrace(question)
 
     context = build_context(question, trace)
 
+    if not context.strip():
+        logger.warning("[EMPTY_CONTEXT] No retrieved context")
+
     trace.start_stage("generation")
 
-    tokens = []
     answer_parts = []
 
     for token in generate_answer(question, context, stream=True):
 
-        tokens.append(token)
         answer_parts.append(token)
 
         yield token
@@ -146,12 +178,9 @@ def ask_stream(question):
 
     answer = "".join(answer_parts)
 
-    score = grounding_score(answer, context)
+    finalize_answer(answer, context)
 
-    logger.info(f"[ANSWER] {answer}")
-    logger.info(f"[GROUNDING] score={score}")
-
-    if score < 0.35:
-        logger.warning("[HALLUCINATION_RISK] answer poorly grounded")
+    # store in cache
+    store_cache(question, answer)
 
     trace.finish()

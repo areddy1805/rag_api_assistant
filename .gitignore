@@ -26,3 +26,6 @@ data/bm25/
 logs/
 trace.log
 rag.log
+
+# evaluation artifacts
+reports/
